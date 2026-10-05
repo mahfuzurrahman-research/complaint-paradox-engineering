@@ -1,0 +1,18 @@
+.git
+.venv
+__pycache__
+.pytest_cache
+outputs
+*.duckdb
+*.pyc
+.DS_Store
+
+# Fail-safe exclusions if private-style folders are ever copied here by mistake.
+manuscript
+data/raw
+data/analytical
+results
+provenance/private
+private
+restricted
+secrets
