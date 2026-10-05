@@ -10,6 +10,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -17,8 +18,12 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
-      - name: Run public synthetic pipeline
-        run: bash run_public_demo.sh
+      - name: Run both public synthetic pipelines and tests
+        run: bash run_all_demos.sh
+      - name: Build and execute Docker demonstration
+        run: |
+          docker build -t complaint-signal-demo .
+          docker run --rm complaint-signal-demo
       - name: Upload public-safe demo outputs
         uses: actions/upload-artifact@v4
         with:
@@ -29,3 +34,6 @@ jobs:
             outputs/public_report.json
             outputs/public_report.md
             outputs/public_dashboard.html
+            outputs/signals/*.csv
+            outputs/signals/*.json
+            outputs/signals/*.duckdb

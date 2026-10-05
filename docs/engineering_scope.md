@@ -13,7 +13,10 @@ This public companion includes only independently generated synthetic data and p
 - automated reporting;
 - testing;
 - CI;
-- containerized execution.
+- containerized execution;
+- synthetic complaint-signal quality admission and exposure normalization;
+- point-anomaly and modified CUSUM alerts with temporal isolation;
+- separate injection evaluation, reference replay and artifact integrity checks.
 
 ## Excluded
 
@@ -33,3 +36,9 @@ The following remain in the private scientific repository and are not required t
 ## Claim ceiling
 
 A passing public companion demonstrates that the public engineering code operates correctly on the supplied synthetic fixture. It does not reproduce, validate, or disclose the private scientific findings.
+
+Reporting exposure is a fabricated opportunity count, not a validated measure of
+service demand, population need or underlying failure. An alert requests review
+of the reporting stream and context. It does not establish misconduct, service
+failure or a causal effect. No real complaint-classification accuracy, deployment
+history or scientific inference is claimed by this upgrade.

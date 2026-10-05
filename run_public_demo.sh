@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+cd "$(dirname "$0")"
 
 mkdir -p outputs
 python src/monitoring/panel_monitor.py \
@@ -22,6 +23,6 @@ python dashboards/build_demo_dashboard.py \
   --output outputs/public_dashboard.html
 
 python examples/mini_panel_fe_demo.py data/synthetic/demo_panel.csv
-pytest -q
+python -m pytest -q tests
 
 echo "PUBLIC_COMPANION_STATUS=PASS"
