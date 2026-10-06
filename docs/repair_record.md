@@ -28,11 +28,13 @@ runner-scheduling cause.
 | Lock inside replaceable output tied to the old directory | Whole-directory replacement requires a stable lock; path aliases can bypass inconsistent lock names | Canonical parent and sibling lock with alias/concurrency tests |
 | Existing output ownership unguarded | A chosen output folder could contain unrelated files | Exact generated inventory required; unknown contents and symlinks preserved |
 | Documentation described weaker verification and pending baseline CI | Readers could misunderstand the available evidence | Updated validation, reproducibility and capability records; live CI badge |
+| New replay's Python timestamp conversion depended on undeclared `pytz` | First repaired hosted run failed despite local success | UTC JSON serialization inside DuckDB; subprocess regression explicitly blocks `pytz` |
+| Checkout/setup actions used deprecated Node.js 20 runtimes | Hosted runner warned and forced a runtime override | Official Node.js 24 releases verified and pinned to their commit SHAs |
 
 The detector thresholds, seed, baseline split and default scientific boundaries
 are unchanged. The default reference remains `signal-v1-e5d10fd3709c3b5b`, with
 60 queue rows and the previously reported detections and misses. Tests rose from
-43 to 123; signal SQL gates rose from 10 to 26. These repairs validate the
+43 to 124; signal SQL gates rose from 10 to 26. These repairs validate the
 engineering demonstration. They do not calibrate real-world false-alarm rates
 or prove the scientific complaint paradox. Receipts remain unsigned; publication
 rollback covers ordinary exceptions rather than hard-crash durability.

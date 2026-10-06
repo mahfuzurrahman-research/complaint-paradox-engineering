@@ -2,7 +2,8 @@
 
 Validated on 2026-10-06 UTC using Python 3.12.14 on Linux, NumPy 2.3.5,
 DuckDB 1.5.6 and pytest 9.1.1. These are actual local observations from
-`bash run_all_demos.sh`, not results from a hosted CI or Docker run.
+the original demo, `python -m pytest -q tests tests_signal`, signal generation and
+`--verify-only`, not results from a hosted CI or Docker run.
 
 ## Execution and integrity
 
@@ -10,8 +11,8 @@ DuckDB 1.5.6 and pytest 9.1.1. These are actual local observations from
 |---|---|
 | Original synthetic panel, SQL, reports and dashboard | PASS |
 | Original tests | 14 passed |
-| Signal tests | 109 passed |
-| Total local tests | 123 passed; no skipped tests |
+| Signal tests | 110 passed |
+| Total local tests | 124 passed; no skipped tests |
 | Signal pipeline and receipt verification | PASS |
 | Independent DuckDB checks | 26 signal + 4 original checks, zero failures |
 | Saved-reference replay | Identical scores and queue |
@@ -28,6 +29,7 @@ DuckDB 1.5.6 and pytest 9.1.1. These are actual local observations from
 | Publication rename failure | Previous completed output restored |
 | Concurrent writer | Rejected; lock released after failure |
 | Parent-path alias writer | Rejected by the same stable lock |
+| Replay without undeclared `pytz` | PASS in subprocess with imports blocked |
 | Unknown output files and symlinks | Refused and preserved |
 | Dependency compatibility | `python -m pip check` passed |
 

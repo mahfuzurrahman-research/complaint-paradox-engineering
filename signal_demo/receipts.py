@@ -90,20 +90,25 @@ def load_truth(path, c):
 def database_fingerprint(path):
     con = duckdb.connect(str(path), read_only=True)
     try:
+        con.execute("SET TimeZone='UTC'")
         result = {}
+        encode = lambda obj: json.dumps(obj, sort_keys=True, allow_nan=False)
         for schema, name in con.execute(
             "SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name"
         ).fetchall():
             quoted = (
                 '"' + schema.replace('"', '""') + '"."' + name.replace('"', '""') + '"'
             )
-            encode = lambda obj: json.dumps(
-                obj, sort_keys=True, allow_nan=False, default=lambda x: x.isoformat()
-            )
             result[schema + "." + name] = {
                 "schema": con.execute(f"DESCRIBE {quoted}").fetchall(),
                 "rows": sorted(
-                    con.execute(f"SELECT * FROM {quoted}").fetchall(), key=encode
+                    [
+                        strict_json(row[0])
+                        for row in con.execute(
+                            f"SELECT to_json(r) FROM {quoted} AS r"
+                        ).fetchall()
+                    ],
+                    key=encode,
                 ),
             }
         return hashlib.sha256(encode(result).encode()).hexdigest()

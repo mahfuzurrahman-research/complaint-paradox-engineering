@@ -12,12 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: python -m pip install -r requirements.txt
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip check
       - name: Run both public synthetic pipelines and tests
         run: bash run_all_demos.sh
       - name: Build and execute Docker demonstration
@@ -25,9 +29,10 @@ jobs:
           docker build -t complaint-signal-demo .
           docker run --rm complaint-signal-demo
       - name: Upload public-safe demo outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: public-engineering-demo
+          if-no-files-found: error
           path: |
             outputs/monitor_summary.json
             outputs/sql_quality.json

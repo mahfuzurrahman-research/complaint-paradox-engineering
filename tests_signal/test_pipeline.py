@@ -1,6 +1,8 @@
 import fcntl
 import json
 import shutil
+import subprocess
+import sys
 from copy import deepcopy
 from pathlib import Path
 
@@ -394,3 +396,21 @@ def test_writer_alias_cannot_bypass_stable_lock(completed, tmp_path):
                 pipeline.run(alias / completed.name)
         finally:
             fcntl.flock(lock, fcntl.LOCK_UN)
+
+
+def test_database_replay_does_not_require_undeclared_timezone_package(completed):
+    code = """
+import importlib.abc
+import sys
+class NoPytz(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname == 'pytz' or fullname.startswith('pytz.'):
+            raise ImportError('undeclared timezone package prohibited')
+sys.meta_path.insert(0, NoPytz())
+from signal_demo.receipts import database_fingerprint
+assert len(database_fingerprint(sys.argv[1])) == 64
+"""
+    subprocess.run(
+        [sys.executable, "-c", code, str(completed / "signal_monitor.duckdb")],
+        check=True,
+    )
