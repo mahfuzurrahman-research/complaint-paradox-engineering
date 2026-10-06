@@ -12,11 +12,24 @@ def panel():
     rows = []
     for day in calendar(c):
         for channel, count in [("mobile", 10), ("legacy", 6)]:
-            rows.append({
-                "record_id": f"OBS{len(rows):06d}", "area_id": "SYN000",
-                "event_day": day, "channel": channel, "complaints": count,
-                "opportunities": 500,
-                "available_at": iso(datetime.combine(date.fromisoformat(day)+timedelta(days=1), datetime.min.time(), timezone.utc)+timedelta(hours=6)),
-                "complete": True, "synthetic_record": True,
-            })
+            rows.append(
+                {
+                    "record_id": f"OBS{len(rows):06d}",
+                    "area_id": "SYN000",
+                    "event_day": day,
+                    "channel": channel,
+                    "complaints": count,
+                    "opportunities": 500,
+                    "available_at": iso(
+                        datetime.combine(
+                            date.fromisoformat(day) + timedelta(days=1),
+                            datetime.min.time(),
+                            timezone.utc,
+                        )
+                        + timedelta(hours=6)
+                    ),
+                    "complete": True,
+                    "synthetic_record": True,
+                }
+            )
     return c, rows

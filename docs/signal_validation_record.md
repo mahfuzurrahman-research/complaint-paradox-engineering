@@ -1,6 +1,6 @@
 # Observed local validation
 
-Validated on 2026-10-05 UTC using Python 3.12.14 on Linux, NumPy 2.3.5,
+Validated on 2026-10-06 UTC using Python 3.12.14 on Linux, NumPy 2.3.5,
 DuckDB 1.5.6 and pytest 9.1.1. These are actual local observations from
 `bash run_all_demos.sh`, not results from a hosted CI or Docker run.
 
@@ -9,25 +9,37 @@ DuckDB 1.5.6 and pytest 9.1.1. These are actual local observations from
 | Check | Observed result |
 |---|---|
 | Original synthetic panel, SQL, reports and dashboard | PASS |
-| Original tests | 5 passed |
-| Signal tests | 38 passed |
-| Total local tests | 43 passed; no skipped tests |
+| Original tests | 14 passed |
+| Signal tests | 109 passed |
+| Total local tests | 123 passed; no skipped tests |
 | Signal pipeline and receipt verification | PASS |
-| Independent DuckDB checks | 10 checks, zero failures |
+| Independent DuckDB checks | 26 signal + 4 original checks, zero failures |
 | Saved-reference replay | Identical scores and queue |
 | Repeated runs | Identical data CSV/JSON files and manifest |
 | Future perturbation | Baseline and earlier scores unchanged |
 | Corruption/incomplete receipt | Rejected |
+| Changed artifacts with rewritten hashes | Rejected by semantic replay |
+| Current source/manifest mismatch | Rejected |
 | Missing/null/corrupted SQL scores | Rejected |
+| Missing/extra queue alerts and null action flags | Rejected |
+| CUSUM state, direction, recovery and gap parity | PASS; corrupt states rejected |
+| Coherently rehashed but incorrect references | Rejected against raw baseline |
 | Staging failure | Previous completed output preserved |
+| Publication rename failure | Previous completed output restored |
 | Concurrent writer | Rejected; lock released after failure |
+| Parent-path alias writer | Rejected by the same stable lock |
+| Unknown output files and symlinks | Refused and preserved |
 | Dependency compatibility | `python -m pip check` passed |
 
-Docker was unavailable in the local environment. The workflow is configured to
-execute the combined pipelines and Docker build/run on GitHub; a completed hosted
-run is required before claiming either hosted CI or container execution passed
-for this upgrade. The repository's earlier passing workflow belongs to the
-previous revision and does not validate this new code.
+Docker was unavailable locally. For baseline commit `26b9e51`, the
+[second hosted attempt](https://github.com/mahfuzurrahman-research/complaint-paradox-engineering/actions/runs/37372191880/attempts/2)
+passed, including Docker build/execution and artifact upload. The first attempt
+was cancelled with no assigned runner or executed steps. This establishes the
+baseline's hosted result, not the repaired revision's result. The
+[workflow page](https://github.com/mahfuzurrahman-research/complaint-paradox-engineering/actions/workflows/public-validation.yml)
+records the tested commit and result for every revision; inspect the matching
+commit before claiming hosted CI or Docker success. See the repair record for
+the separate validation defects addressed here.
 
 ## Fixed-seed injection observations
 

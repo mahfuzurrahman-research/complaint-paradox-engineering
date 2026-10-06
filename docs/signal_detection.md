@@ -11,7 +11,9 @@ rates rather than treating every increase in raw complaints as deterioration.
 
 The scheduled inventory has six fabricated areas, two channels and 168 days.
 Records require exact fields, unique neutral record IDs, non-negative integer
-counts, canonical UTC timestamps and explicit synthetic/completeness markers.
+counts bounded to `0..2^31-1`, canonical UTC timestamps and explicit
+synthetic/completeness markers. Policy JSON requires an exact schema and rejects
+duplicate keys, non-finite constants and ambiguous boolean/numeric types.
 Injection labels and unknown fields are rejected from operational records.
 
 Each daily bucket requires both channels exactly once, positive exposures and
@@ -95,8 +97,18 @@ offline evaluator after scoring. Daily point confusion and event-level change
 delay are separate quantities; repeated point misses within a shifted episode
 are retained in the evaluation.
 
-DuckDB independently recomputes baseline rates, count/exposure totals, expected
-counts, variances and standardized residuals. Additional checks cover monitor
-inventory, null/non-finite admitted scores, blocked scores, duplicate keys and
-unauthorized actions. Saved-reference replay must reproduce scores and queue.
-Output hashes detect file inconsistency; they do not authenticate the producer.
+DuckDB independently reconstructs scheduled admission/reasons from raw records,
+baseline rates, dispersion, mean exposure, counts, variances and residuals. Its
+recursive CUSUM checks accumulation, directions, episode latching, recovery and
+quality-gap resets against Python. It also reconstructs every expected review,
+including identity, rank, action, reasons and residual. Missing or extra alerts,
+null authorization flags and incorrect detector state fail the 26 SQL gates.
+Numeric Python/SQL comparisons use absolute tolerances of `1e-12` for rates and
+`1e-10` for other derived quantities.
+
+Saved-reference replay must reproduce scores and queue. Receipt verification
+replays the raw CSVs, validates the current source/dependency manifest and compares
+all saved database relation schemas and row contents against an independent
+rebuild. Explicit ordering in floating-point SQL aggregates makes those rebuilds
+agree in the pinned environment. CSV/JSON data remain deterministic; physical
+database bytes need not. The receipt establishes consistency, not authenticity.

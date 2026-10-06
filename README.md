@@ -2,6 +2,8 @@
 
 **Public-safe research engineering portfolio by Mahfuzur Rahman**
 
+[![Public Engineering Validation](https://github.com/mahfuzurrahman-research/complaint-paradox-engineering/actions/workflows/public-validation.yml/badge.svg)](https://github.com/mahfuzurrahman-research/complaint-paradox-engineering/actions/workflows/public-validation.yml)
+
 This repository demonstrates the software and data-engineering practices used around a private research project on administrative observability and complaint-based performance measurement. It is intentionally separated from the private scientific repository.
 
 The purpose is to make engineering capability independently inspectable **without publishing the manuscript, real analytical datasets, exact empirical specification, private results, bootstrap outputs, or restricted provenance**.
@@ -43,6 +45,8 @@ growth, missing channels, delayed batches, zero exposure and a valid zero.
 See [method and limitations](docs/signal_detection.md),
 [observed validation](docs/signal_validation_record.md) and
 [supported CV wording](docs/cv_evidence.md).
+The [repair record](docs/repair_record.md) explains the cancelled CI job and the
+validation gaps corrected on 2026-10-06.
 
 ## Public architecture
 
@@ -95,10 +99,13 @@ existing signal run with `python -m signal_demo.pipeline --verify-only`.
 The original panel remains available with `bash run_public_demo.sh`.
 
 Signal CSV/JSON outputs, a DuckDB database and the replay/integrity receipt are
-written under `outputs/signals/`. Successful staging is required before replacing
-an earlier run; the receipt is published last. Verification detects missing or
-modified artifacts. These hashes provide consistency checks, not signed proof of
-authenticity. Database file bytes may vary across equivalent builds.
+written under `outputs/signals/`. Fully verified staging replaces the completed
+directory; ordinary publication exceptions restore the previous run. Verification
+checks hashes, current sources/dependencies/policy and semantic replay from raw
+inputs, including all database relations. Rewriting hashes alone cannot hide
+altered scores, alerts or reports. Receipts are explicitly unsigned and establish
+no producer authenticity. Database file bytes may vary across equivalent builds.
+See the reproducibility document for publication and process-lock limits.
 
 ## Engineering boundary
 

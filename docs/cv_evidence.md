@@ -17,10 +17,10 @@ A more compact skills-oriented bullet:
 | Signal-quality engineering | schema contract, scheduled inventory, blocked buckets and valid-zero tests |
 | Statistical anomaly/change detection | working-variance residuals and modified two-sided CUSUM |
 | Temporal validation | earlier-only fitting, availability guards and future-perturbation tests |
-| Numerical verification | DuckDB independently recomputes rates, totals and scores |
-| Reproducible engineering | fixed seed/policy, saved reference replay, source/dependency manifest |
+| Numerical/state verification | 26 DuckDB gates independently check raw admission, dispersion, residuals, recursive CUSUM and complete queues |
+| Reproducible engineering | fixed seed/policy, raw-input semantic replay and enforced source/dependency manifest |
 | Testing | local suite and failure/corruption checks; see validation record |
-| CI/container configuration | workflow and Dockerfile; hosted execution requires a completed passing run |
+| CI/container execution | workflow and Dockerfile; baseline retry passed with Docker; inspect the current revision's actual workflow |
 
 The project does not substantiate production deployment, real administrative
 data experience, real-world predictive accuracy, causal evaluation or replication

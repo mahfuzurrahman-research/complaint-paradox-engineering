@@ -21,6 +21,13 @@ SELECT * FROM (
        OR feature_a IS NULL
        OR feature_b IS NULL
        OR outcome_value IS NULL
+       OR NOT ISFINITE(feature_a)
+       OR NOT ISFINITE(feature_b)
+       OR NOT ISFINITE(outcome_value)
+       OR TRIM(entity_id) = ''
+       OR TRIM(period_id) = ''
+       OR entity_id <> TRIM(entity_id)
+       OR period_id <> TRIM(period_id)
 
     UNION ALL
 

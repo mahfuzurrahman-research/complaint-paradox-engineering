@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta, timezone
+
 import numpy as np
 
 from .contracts import calendar, iso
@@ -31,10 +32,15 @@ def generate(c: dict) -> tuple[list[dict], list[dict]]:
                 injected = "DUPLICATE_CHANNEL"
             elif area_index == 4 and day_index == 117:
                 injected = "INCOMPLETE_BATCH"
-            truth.append({
-                "area_id": area, "event_day": day, "injected_event": injected,
-                "rate_anomaly": injected in {"POINT_SPIKE", "RATE_SHIFT", "ZERO_REPORTS"},
-            })
+            truth.append(
+                {
+                    "area_id": area,
+                    "event_day": day,
+                    "injected_event": injected,
+                    "rate_anomaly": injected
+                    in {"POINT_SPIKE", "RATE_SHIFT", "ZERO_REPORTS"},
+                }
+            )
             for channel in c["channels"]:
                 if injected == "MISSING_CHANNEL" and channel == "legacy":
                     continue
@@ -51,14 +57,23 @@ def generate(c: dict) -> tuple[list[dict], list[dict]]:
                     count = 0
                 if injected == "ZERO_EXPOSURE" and channel == "mobile":
                     opportunities, count = 0, 0
-                availability = datetime.combine(date.fromisoformat(day)+timedelta(days=1), datetime.min.time(), timezone.utc) + timedelta(hours=6)
+                availability = datetime.combine(
+                    date.fromisoformat(day) + timedelta(days=1),
+                    datetime.min.time(),
+                    timezone.utc,
+                ) + timedelta(hours=6)
                 if injected == "LATE_DATA":
                     availability += timedelta(hours=24)
                 row = {
-                    "record_id": f"OBS{len(rows):06d}", "area_id": area,
-                    "event_day": day, "channel": channel, "complaints": count,
-                    "opportunities": opportunities, "available_at": iso(availability),
-                    "complete": injected != "INCOMPLETE_BATCH", "synthetic_record": True,
+                    "record_id": f"OBS{len(rows):06d}",
+                    "area_id": area,
+                    "event_day": day,
+                    "channel": channel,
+                    "complaints": count,
+                    "opportunities": opportunities,
+                    "available_at": iso(availability),
+                    "complete": injected != "INCOMPLETE_BATCH",
+                    "synthetic_record": True,
                 }
                 rows.append(row)
                 if injected == "DUPLICATE_CHANNEL" and channel == "mobile":

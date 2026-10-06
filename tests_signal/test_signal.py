@@ -1,6 +1,6 @@
-from copy import deepcopy
 import math
 import random
+from copy import deepcopy
 
 import pytest
 
@@ -15,11 +15,19 @@ def detect(c, rows):
     return quality, reference, monitor(quality, reference, c)
 
 
-@pytest.mark.parametrize("field,value", [
-    ("complaints", -1), ("complaints", True), ("complaints", 1.5),
-    ("complaints", float("nan")), ("complaints", "4"),
-    ("opportunities", -1), ("opportunities", False), ("opportunities", float("inf")),
-])
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("complaints", -1),
+        ("complaints", True),
+        ("complaints", 1.5),
+        ("complaints", float("nan")),
+        ("complaints", "4"),
+        ("opportunities", -1),
+        ("opportunities", False),
+        ("opportunities", float("inf")),
+    ],
+)
 def test_invalid_counts_are_rejected(panel, field, value):
     c, rows = panel
     rows[0][field] = value
@@ -45,11 +53,17 @@ def test_completed_period_cannot_be_available_in_advance(panel):
         validate_records(rows, c)
 
 
-@pytest.mark.parametrize("failure,reason", [
-    ("missing", "MISSING_CHANNEL"), ("duplicate", "DUPLICATE_CHANNEL"),
-    ("incomplete", "INCOMPLETE_BATCH"), ("zero_exposure", "ZERO_EXPOSURE"),
-    ("future", "UNAVAILABLE_AT_MONITOR"), ("late", "LATE_BATCH"),
-])
+@pytest.mark.parametrize(
+    "failure,reason",
+    [
+        ("missing", "MISSING_CHANNEL"),
+        ("duplicate", "DUPLICATE_CHANNEL"),
+        ("incomplete", "INCOMPLETE_BATCH"),
+        ("zero_exposure", "ZERO_EXPOSURE"),
+        ("future", "UNAVAILABLE_AT_MONITOR"),
+        ("late", "LATE_BATCH"),
+    ],
+)
 def test_bad_bucket_is_blocked_without_zero_imputation(panel, failure, reason):
     c, rows = panel
     record = next(r for r in rows if r["event_day"] == "2025-02-01")
@@ -70,7 +84,11 @@ def test_bad_bucket_is_blocked_without_zero_imputation(panel, failure, reason):
     assert reason in bucket["reason_codes"]
     assert bucket["complaints"] is None and bucket["standardized_residual"] is None
     assert not bucket["admitted"] and not bucket["valid_zero"]
-    assert bucket["state_reset"] and not bucket["point_alert"] and not bucket["change_alert"]
+    assert (
+        bucket["state_reset"]
+        and not bucket["point_alert"]
+        and not bucket["change_alert"]
+    )
     queue = build_review_queue(scored)
     assert len(queue) == 1 and queue[0]["recommended_action"] == "CHECK_FEED"
 
@@ -118,7 +136,9 @@ def test_future_observations_cannot_change_reference_or_earlier_alerts(panel):
             row["complaints"] *= 9
     _, new_reference, new_scored = detect(c, changed)
     assert new_reference == reference
-    assert [s for s in scored if s["event_day"] < "2025-02-10"] == [s for s in new_scored if s["event_day"] < "2025-02-10"]
+    assert [s for s in scored if s["event_day"] < "2025-02-10"] == [
+        s for s in new_scored if s["event_day"] < "2025-02-10"
+    ]
 
 
 def test_row_order_does_not_change_reference_scores_or_queue(panel):
@@ -149,7 +169,9 @@ def test_channel_access_growth_at_unchanged_rate_is_not_anomaly(panel):
             row["complaints"] *= 4
     _, _, scored = detect(c, rows)
     assert all(s["complaints"] == 46 and s["expected_count"] == 46 for s in scored)
-    assert all(s["exposure_ratio"] == 2.5 and s["standardized_residual"] == 0 for s in scored)
+    assert all(
+        s["exposure_ratio"] == 2.5 and s["standardized_residual"] == 0 for s in scored
+    )
     assert build_review_queue(scored) == []
 
 
@@ -173,7 +195,14 @@ def test_isolated_spike_and_sustained_shift_have_different_alerts(panel):
 def test_quality_gap_resets_accumulation(panel):
     c, rows = panel
     for r in rows:
-        if r["event_day"] in {"2025-01-29", "2025-01-30", "2025-01-31", "2025-02-02", "2025-02-03", "2025-02-04"}:
+        if r["event_day"] in {
+            "2025-01-29",
+            "2025-01-30",
+            "2025-01-31",
+            "2025-02-02",
+            "2025-02-03",
+            "2025-02-04",
+        }:
             r["complaints"] *= 2
     rows = [r for r in rows if r["event_day"] != "2025-02-01"]
     _, _, scored = detect(c, rows)
@@ -204,5 +233,9 @@ def test_queue_contains_no_truth_or_permission_for_adverse_action(panel):
     queue = build_review_queue(scored)
     assert queue[0]["alert_type"] == "RATE_SHIFT_ALERT"
     assert len({q["alert_id"] for q in queue}) == len(queue)
-    assert all(q["review_status"] == "PENDING_REVIEW" and q["adverse_action_authorized"] is False for q in queue)
+    assert all(
+        q["review_status"] == "PENDING_REVIEW"
+        and q["adverse_action_authorized"] is False
+        for q in queue
+    )
     assert all("injected_event" not in q and "rate_anomaly" not in q for q in queue)
